@@ -15,7 +15,7 @@ const Sidebar = () => {
       <div className="h-full px-3 py-4 overflow-y-auto">
         <ul className="space-y-2 font-medium">
           <SidebarItem to="/" icon={<Home />} label="Home" />
-          <SidebarItem to="/dashboard" icon={<BarChart />} label="Dashboard" />
+          {/* <SidebarItem to="/dashboard" icon={<BarChart />} label="Dashboard" /> */}
           <SidebarItem to="/guidelines" icon={<BookOpen />} label="Safety Guidelines" />
           <SidebarItem to="/report" icon={<AlertTriangle />} label="Report Emergency" exact />
           <SidebarItem to="/profile" icon={<User />} label="Profile" />
