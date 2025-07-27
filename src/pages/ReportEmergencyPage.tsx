@@ -141,8 +141,14 @@ const ReportEmergencyPage = () => {
         <p className="text-gray-600 dark:text-gray-400">
           Use this form to report an emergency situation in your area. Your report will be sent to the appropriate authorities.
         </p>
-      </header>
+        
             </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+          <div className="bg-primary-600 dark:bg-primary-900 p-4 flex items-center text-white">
+            <AlertTriangle className="h-6 w-6 mr-2" />
+            <h2 className="text-lg font-semibold">Emergency Report Form</h2>
+          </div>
+        </div>
 
           {/* Emergency Type */}
           <div>
