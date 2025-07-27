@@ -5,8 +5,8 @@ import { useAuthStore } from '../stores/authStore';
 
 const LoginPage = () => {
   const { login, isAuthenticated, isLoading, error } = useAuthStore();
-  const [email, setEmail] = useState('john@example.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,13 +94,6 @@ const LoginPage = () => {
                   Remember me
                 </label>
               </div>
-              
-              <Link
-                to="/forgot-password"
-                className="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
-              >
-                Forgot your password?
-              </Link>
             </div>
             
             <div>
