@@ -1,18 +1,40 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, Shield, Phone } from 'lucide-react';
 import { useEmergencyStore } from '../stores/emergencyStore';
-import AlertCard from '../components/AlertCard';
 
 const HomePage = () => {
   const { alerts, fetchAlerts, isLoading } = useEmergencyStore();
-  
+  const [newsReports, setNewsReports] = useState<any[]>([]);
+  const [isNewsLoading, setIsNewsLoading] = useState(true);
+
   useEffect(() => {
     fetchAlerts();
   }, [fetchAlerts]);
-  
-  const activeAlerts = alerts.filter(alert => alert.isActive);
-  
+
+  const activeAlerts = alerts.filter((alert) => alert.isActive);
+
+  const fetchNewsReports = async () => {
+    setIsNewsLoading(true);
+    try {
+      const res = await fetch(
+        `https://newsdata.io/api/1/news?apikey=pub_b94d2f9f6eef44c48f49fe6fe6e211bd&country=ng&language=en&q=flood OR fire OR epidemic OR outbreak OR emergency`
+      );
+      const data = await res.json();
+      setNewsReports(data.results || []);
+    } catch (err) {
+      console.error('Failed to fetch news:', err);
+    } finally {
+      setIsNewsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNewsReports();
+    const interval = setInterval(fetchNewsReports, 300000); // Refresh every 5 minutes
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="space-y-8">
       <header className="bg-primary-600 dark:bg-primary-900 text-white rounded-lg p-8 shadow-md">
@@ -41,45 +63,55 @@ const HomePage = () => {
           </div>
         </div>
       </header>
-      
+
+      {/* Emergency News Section */}
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Active Alerts in Nigeria
-          </h2>
-          <Link 
-            to="/dashboard" 
-            className="text-secondary-600 dark:text-secondary-400 hover:underline text-sm font-medium"
-          >
-            View All
-          </Link>
-        </div>
-        
-        {isLoading ? (
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          Latest Emergency News in Nigeria
+        </h2>
+
+        {isNewsLoading ? (
           <div className="text-center py-12">
             <div className="w-10 h-10 mx-auto border-4 border-primary-300 border-t-primary-600 rounded-full animate-spin"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading alerts...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading emergency news...</p>
           </div>
-        ) : activeAlerts.length > 0 ? (
+        ) : newsReports.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
-            {activeAlerts.slice(0, 4).map((alert) => (
-              <AlertCard key={alert.id} alert={alert} />
+            {newsReports.slice(0, 6).map((report, index) => (
+              <div
+                key={index}
+                className="p-4 border rounded-lg shadow bg-white dark:bg-gray-900"
+              >
+                <h3 className="text-lg font-semibold text-primary-700 dark:text-primary-300">
+                  {report.title.length > 100 ? report.title.slice(0, 100) + '...' : report.title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {new Date(report.pubDate).toLocaleDateString()} — {report.source_id || 'Newsdata'}
+                </p>
+                <a
+                  href={report.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline mt-2 inline-block text-sm"
+                >
+                  Read full article →
+                </a>
+              </div>
             ))}
           </div>
         ) : (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 text-center">
-            <p className="text-gray-600 dark:text-gray-400">No active alerts at this time.</p>
-          </div>
+          <p className="text-gray-500 dark:text-gray-400">No recent news available.</p>
         )}
       </section>
-      
+
+      {/* Info Cards */}
       <section className="grid gap-6 md:grid-cols-3">
         <QuickInfoCard
           title="Emergency Contacts"
           icon={<Phone className="h-8 w-8 text-primary-500" />}
           description="Access important Nigerian emergency phone numbers and contact information."
-          link="/dashboard"
-          linkText="View Contacts"
+          link=""
+          linkText=""
           color="bg-primary-50 dark:bg-primary-900/20"
         />
         <QuickInfoCard
@@ -90,29 +122,41 @@ const HomePage = () => {
           linkText="View Routes"
           color="bg-secondary-50 dark:bg-secondary-900/20"
         />
-        <QuickInfoCard
-          title="Weather Updates"
-          icon={<AlertTriangle className="h-8 w-8 text-warning-500" />}
-          description="Get the latest weather warnings and forecasts for your region in Nigeria."
-          link="/dashboard"
-          linkText="Check Weather"
-          color="bg-warning-50 dark:bg-warning-900/20"
-        />
+      </section>
+
+      <section>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+          <Phone className="h-5 w-5 mr-2 text-warning-500" />
+          Nigerian Emergency Contacts
+        </h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <ContactCard name="National Emergency Number" number="112" description="Police, Fire, Medical Emergency" isPrimary />
+          <ContactCard name="NEMA Emergency" number="0800-CALL-NEMA" description="National Emergency Management Agency" />
+          <ContactCard name="Nigeria Police" number="0805-700-0001" description="For security emergencies" />
+          <ContactCard name="Federal Fire Service" number="08032003557" description="For fire emergencies" />
+          <ContactCard name="FRSC Emergency" number="122" description="Federal Road Safety Corps" />
+          <ContactCard name="NCDC" number="0800-9700-0010" description="Nigeria Centre for Disease Control" />
+        </div>
       </section>
     </div>
   );
 };
 
-interface QuickInfoCardProps {
+const QuickInfoCard = ({
+  title,
+  icon,
+  description,
+  link,
+  linkText,
+  color,
+}: {
   title: string;
   icon: React.ReactNode;
   description: string;
   link: string;
   linkText: string;
   color: string;
-}
-
-const QuickInfoCard = ({ title, icon, description, link, linkText, color }: QuickInfoCardProps) => {
+}) => {
   return (
     <div className={`rounded-lg p-6 ${color} border border-gray-200 dark:border-gray-700`}>
       <div className="flex items-center mb-4">
@@ -120,14 +164,44 @@ const QuickInfoCard = ({ title, icon, description, link, linkText, color }: Quic
         <h3 className="ml-3 text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
       </div>
       <p className="mb-4 text-gray-700 dark:text-gray-300">{description}</p>
-      <Link
-        to={link}
-        className="text-secondary-600 dark:text-secondary-400 font-medium hover:underline"
-      >
-        {linkText} →
-      </Link>
+      {link && (
+        <Link
+          to={link}
+          className="text-secondary-600 dark:text-secondary-400 font-medium hover:underline"
+        >
+          {linkText}
+        </Link>
+      )}
     </div>
   );
 };
+
+const ContactCard = ({
+  name,
+  number,
+  description,
+  isPrimary,
+}: {
+  name: string;
+  number: string;
+  description: string;
+  isPrimary?: boolean;
+}) => (
+  <div
+    className={`rounded-lg p-5 ${
+      isPrimary ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800' : 'bg-white dark:bg-gray-800'
+    } shadow border border-gray-200 dark:border-gray-700`}
+  >
+    <h3
+      className={`text-lg font-semibold ${
+        isPrimary ? 'text-primary-700 dark:text-primary-400' : 'text-gray-900 dark:text-white'
+      }`}
+    >
+      {name}
+    </h3>
+    <p className="text-xl font-bold mt-2 mb-1">{number}</p>
+    <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+  </div>
+);
 
 export default HomePage;
