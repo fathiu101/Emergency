@@ -31,7 +31,7 @@ const Navbar = () => {
             <ThemeToggle />
             
             <div className="relative">
-              <button
+              {/* <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 className="p-2 rounded-full hover:bg-primary-700 dark:hover:bg-primary-800 relative"
                 aria-label="Notifications"
@@ -40,7 +40,7 @@ const Navbar = () => {
                 {activeAlerts.length > 0 && (
                   <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-warning-500 ring-2 ring-primary-600 dark:ring-primary-950" />
                 )}
-              </button>
+              </button> */}
               
               {notificationsOpen && (
                 <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-md shadow-lg overflow-hidden z-20">
