@@ -102,6 +102,44 @@ const MOCK_GUIDELINES: Guideline[] = [
     ],
     additionalInfo: 'Download the NCDC app for health emergency updates',
   },
+  {
+    id: '4',
+    categoryId: 'fire',
+    title: 'Fire Emergency Response',
+    steps: [
+    'Call 112 or your local fire service immediately when a fire is detected',
+    'Know the location of the nearest fire exits and extinguishers',
+    'Keep a fire extinguisher and smoke alarms in working condition',
+    'Learn how to use a fire extinguisher and follow evacuation protocols',
+    'Keep emergency contacts and evacuation plans easily accessible',
+    ],
+    additionalInfo: 'Download the FFS app for fire emergency updates',
+  },
+  {
+    id: '5',
+    categoryId: 'weather',
+    title: 'Weather Emergency Response',
+    steps: [      'Stay informed through official weather alerts and emergency apps',
+    'Know safe shelter locations for storms, floods, or extreme weather',
+    'Keep an emergency kit with essentials like water, flashlight, and batteries',
+    'Follow evacuation orders or shelter-in-place instructions promptly',
+    'Keep important documents and emergency contacts in a waterproof folder'
+    ],
+    additionalInfo: 'Download the NWS app for weather emergency updates',
+  },
+  {
+    id: '6',
+    categoryId: 'evacuation',
+    title: 'Safe Evacuation Procedures',
+    steps: [
+    'Follow official evacuation orders without delay',
+    'Know your primary and alternative evacuation routes',
+    'Keep a go-bag ready with essentials like ID, medication, and water',
+    'Secure your home if time allows—turn off gas, water, and electricity',
+    'Stay informed through local news and emergency services during evacuation',
+    ],
+    additionalInfo: 'Download the SEMA app for evacution area-specific guidance',
+  },
 ];
 
 const mockDelay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
